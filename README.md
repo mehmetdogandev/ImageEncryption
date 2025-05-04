@@ -13,19 +13,24 @@
 
 Bu projenin tanıtım ve kurulum videolarını izlemek için aşağıdaki bağlantılara tıklayabilirsiniz:
 
-### Güncel Versiyon Tanıtım Videosu
-<a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Güncel Versiyon Tanıtım Videosu">
-  <img src="static/youtube-video.png" alt="Güncel Versiyon Tanıtım Videosu Önizleme" width="600">
-  <br>
-  <b>▶️ Güncel versiyon tanıtım videosunu izlemek için lütfen tıklayınız!</b>
-</a>
-
-### Eski Versiyon Tanıtım Videosu
-<a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Eski Versiyon Tanıtım Videosu">
-  <img src="static/youtube-video2.png" alt="Eski Versiyon Tanıtım Videosu Önizleme" width="600">
-  <br>
-  <b>▶️ Eski versiyon tanıtım videosunu izlemek için lütfen tıklayınız!</b>
-</a>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Güncel Versiyon Tanıtım Videosu">
+        <img src="static/youtube-video.png" alt="Güncel Versiyon Tanıtım Videosu Önizleme" width="100%">
+        <br>
+        <b>▶️ Güncel versiyon tanıtım videosunu izlemek için tıklayınız!</b>
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Eski Versiyon Tanıtım Videosu">
+        <img src="static/youtube-video2.png" alt="Eski Versiyon Tanıtım Videosu Önizleme" width="100%">
+        <br>
+        <b>▶️ Eski versiyon tanıtım videosunu izlemek için tıklayınız!</b>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## 📑 İçindekiler
 
@@ -123,130 +128,4 @@ http://127.0.0.1:5000
 2. "Görüntü Seç" butonuna tıklayın veya bir görüntüyü alana sürükleyip bırakın
 3. "Şifrele" butonuna tıklayın
 4. Şifrelenen görüntü ve orijinal görüntü yan yana gösterilecektir
-5. "Kaydet" butonuna tıklayarak şifrelenmiş görüntüyü sistemde saklayabilirsiniz
-
-### Canlı Kamera ile Şifreleme
-
-1. Ana sayfada "Kamera Moduna Geç" butonuna tıklayın
-2. Kamera izni isteğini onaylayın
-3. Görüntünüz canlı olarak şifrelenecektir
-4. "Yakala" butonuna tıklayarak o anki şifrelenmiş görüntüyü kaydedebilirsiniz
-
-### Görüntü Galerisi
-
-1. "Galeri" sekmesine tıklayın
-2. Daha önce şifrelediğiniz görüntüleri görebilirsiniz
-3. Her görüntü için şu işlemleri yapabilirsiniz:
-   - Görüntüle: Şifrelenmiş görüntüyü tam boyutta görüntüler
-   - Deşifrele: Şifrelenmiş görüntüyü orijinal haline döndürür
-   - Sil: Görüntüyü sistemden kaldırır
-
-## 🔐 Algoritma Detayları
-
-ImageCription, iki aşamalı bir şifreleme algoritması kullanır:
-
-### 1. Piksel Karıştırma (Pixel Shuffle)
-
-Bu aşamada, görüntünün pikselleri rastgele bir düzende yeniden sıralanır:
-
-```python
-def pixel_shuffle_encrypt(image, seed=None):
-    # MEHMET DOĞAN ismini kullanarak bir seed oluşturalım
-    if seed is None:
-        # İsimden bir sayı üretme (ASCII değerleri toplamı)
-        name = "MEHMET DOĞAN"
-        seed = sum(ord(char) for char in name)
-    
-    np.random.seed(seed)
-    flat = image.reshape(-1, image.shape[2])
-    idx = np.arange(flat.shape[0])
-    np.random.shuffle(idx)
-    return flat[idx].reshape(image.shape), idx
-```
-
-### 2. XOR Şifreleme
-
-Karıştırılmış piksellere bir XOR işlemi uygulanır ve dijital imza eklenir:
-
-```python
-def xor_encrypt(image, key=None):
-    # MEHMET DOĞAN isminden anahtar üretelim
-    if key is None:
-        name = "MEHMET DOĞAN"
-        key = sum(ord(char) for char in name) % 256  # 0-255 arasında bir değer
-    
-    # Kişisel imza uygula
-    signed_image = apply_signature(image.copy())
-    
-    return cv2.bitwise_xor(signed_image, key).astype(np.uint8)
-```
-
-### 3. Deşifreleme İşlemi
-
-Deşifreleme, şifreleme adımlarının tersini uygular:
-
-```python
-def xor_decrypt(image, key=None):
-    # MEHMET DOĞAN isminden anahtar üretelim
-    if key is None:
-        name = "MEHMET DOĞAN"
-        key = sum(ord(char) for char in name) % 256
-    
-    # XOR işlemi ile çözelim
-    return cv2.bitwise_xor(image, key).astype(np.uint8)
-
-def pixel_shuffle_decrypt(image, idx):
-    flat = image.reshape(-1, image.shape[2])
-    original = np.zeros_like(flat)
-    original[idx] = flat
-    return original.reshape(image.shape)
-```
-
-## 🛡️ Güvenlik Analizi
-
-### Güçlü Yönler
-
-- **İki Katmanlı Şifreleme**: Piksel karıştırma ve XOR şifreleme kombinasyonu güçlü bir koruma sağlar
-- **Kişiselleştirilmiş Anahtar**: Her kullanıcı için özel anahtar oluşturulabilir
-- **Dijital İmza**: Şifrelenmiş görüntülerde gizli bir dijital imza bulunur
-- **Şifreleme İndeksi**: Karıştırma indeksi güvenli bir şekilde veritabanında saklanır
-
-### Dikkat Edilmesi Gerekenler
-
-- **XOR Anahtarı Sınırlaması**: Anahtar değeri 0-255 arasında sınırlıdır
-- **İndeks Güvenliği**: Karıştırma indeksi güvenliği kritik önemdedir
-- **Sabit Seed**: Aynı seed ile şifrelenen görüntüler benzer karıştırma düzenine sahip olabilir
-
-## 🤝 Katkıda Bulunma
-
-Projeye katkıda bulunmak isterseniz, aşağıdaki adımları izleyebilirsiniz:
-
-1. Projeyi fork edin
-2. Özellik dalı oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Yeni özellik: Harika özellik'`)
-4. Dalınıza push yapın (`git push origin feature/amazing-feature`)
-5. Pull Request açın
-
-## 📞 İletişim
-
-Mehmet DOĞAN - [mehmetdogan.dev@gmail.com](mailto:mehmetdogan.dev@gmail.com)
-
-Proje Bağlantısı: [https://github.com/mehmetdogandev/imagecription](https://github.com/mehmetdogandev/imagecription)
-
-### Sosyal Medya & Web
-
-- **Website**: [memetdogan.com](https://memetdogan.com)
-- **LinkedIn**: [linkedin.com/in/mehmetdogandev](https://www.linkedin.com/in/mehmetdogandev/)
-- **YouTube**: [youtube.com/@md-kare](https://www.youtube.com/@md-kare)
-
-## 📄 Lisans
-
-Bu proje MIT Lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakınız.
-
----
-
-<p align="center">
-  <img src="static/images/footer-logo.png" alt="ImageCription Footer Logo" width="150"/>
-  <br>
-  <strong>Güvenli Görüntü Şifreleme</strong>
-</p>
+5. "Kaydet" butonuna tıklayarak şifrelenmiş görüntüyü
