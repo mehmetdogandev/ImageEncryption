@@ -9,16 +9,24 @@
   <img src="static/logo.png" alt="ImageCription Logo" width="200"/>
 </p>
 
-## 📹 Tanıtım Videosu
+## 📹 Tanıtım Videoları
 
-Bu projenin tanıtım ve kurulum videosunu izlemek için aşağıdaki bağlantıya tıklayabilirsiniz:
- <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Yönetim Paneli Tanıtım Videosu">
-    <img src="static/youtube-video.png" alt="Tanıtım Videosu Önizleme" width="600">
-    <img src="static/youtube-video2.png" alt="Tanıtım Videosu Önizleme" width="600">
+Bu projenin tanıtım ve kurulum videolarını izlemek için aşağıdaki bağlantılara tıklayabilirsiniz:
 
-    <br>
-    <b>▶️ Tanıtım Videosunu izlemek için lütfen tıklayınız!</b>
-  </a>
+### Güncel Versiyon Tanıtım Videosu
+<a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Güncel Versiyon Tanıtım Videosu">
+  <img src="static/youtube-video.png" alt="Güncel Versiyon Tanıtım Videosu Önizleme" width="600">
+  <br>
+  <b>▶️ Güncel versiyon tanıtım videosunu izlemek için lütfen tıklayınız!</b>
+</a>
+
+### Eski Versiyon Tanıtım Videosu
+<a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Eski Versiyon Tanıtım Videosu">
+  <img src="static/youtube-video2.png" alt="Eski Versiyon Tanıtım Videosu Önizleme" width="600">
+  <br>
+  <b>▶️ Eski versiyon tanıtım videosunu izlemek için lütfen tıklayınız!</b>
+</a>
+
 ## 📑 İçindekiler
 
 - [Proje Hakkında](#-proje-hakkında)
