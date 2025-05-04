@@ -14,6 +14,8 @@
 Bu projenin tanıtım ve kurulum videosunu izlemek için aşağıdaki bağlantıya tıklayabilirsiniz:
  <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Yönetim Paneli Tanıtım Videosu">
     <img src="static/youtube-video.png" alt="Tanıtım Videosu Önizleme" width="600">
+    <img src="static/youtube-video2.png" alt="Tanıtım Videosu Önizleme" width="600">
+
     <br>
     <b>▶️ Tanıtım Videosunu izlemek için lütfen tıklayınız!</b>
   </a>
