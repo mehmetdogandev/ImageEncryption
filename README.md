@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 <p align="center">
-  <img src="static/images/logo.png" alt="ImageCription Logo" width="200"/>
+  <img src="static/logo.png" alt="ImageCription Logo" width="200"/>
 </p>
 
 ## 📹 Tanıtım Videosu
