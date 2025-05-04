@@ -16,7 +16,7 @@ Bu projenin tanıtım ve kurulum videolarını izlemek için aşağıdaki bağla
 <table>
   <tr>
     <td align="center" width="50%">
-      <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Güncel Versiyon Tanıtım Videosu">
+      <a href="https://youtu.be/5SYrHZuNODg" title="Güncel Versiyon Tanıtım Videosu">
         <img src="static/youtube-video2.png" alt="Güncel Versiyon Tanıtım Videosu Önizleme" width="100%">
         <br>
         <b>▶️ Güncel versiyon tanıtım videosunu izlemek için tıklayınız!</b>
