@@ -225,7 +225,7 @@ Proje Bağlantısı: [https://github.com/mehmetdogandev/imagecription](https://g
 
 ### Sosyal Medya & Web
 
-- **Website**: [mehmetdogan.com](https://mehmetdogan.com)
+- **Website**: [memetdogan.com](https://memetdogan.com)
 - **LinkedIn**: [linkedin.com/in/mehmetdogandev](https://www.linkedin.com/in/mehmetdogandev/)
 - **YouTube**: [youtube.com/@md-kare](https://www.youtube.com/@md-kare)
 
