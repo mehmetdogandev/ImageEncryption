@@ -12,9 +12,11 @@
 ## 📹 Tanıtım Videosu
 
 Bu projenin tanıtım ve kurulum videosunu izlemek için aşağıdaki bağlantıya tıklayabilirsiniz:
-
-[![ImageCription Tanıtım Videosu](https://youtu.be/sONvWO89beE)](https://www.youtube.com/@md-kare)
-
+ <a href="https://youtu.be/sONvWO89beE?si=yCHHiuO5Yb2MRAk-" title="Yönetim Paneli Tanıtım Videosu">
+    <img src="static/youtube-video.png" alt="Tanıtım Videosu Önizleme" width="600">
+    <br>
+    <b>▶️ Tanıtım Videosunu izlemek için lütfen tıklayınız!</b>
+  </a>
 ## 📑 İçindekiler
 
 - [Proje Hakkında](#-proje-hakkında)
