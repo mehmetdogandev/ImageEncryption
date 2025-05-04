@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+
+{% block title %}MDcription - Ana Sayfa{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Görüntü Şifreleme Sistemi</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Kamera Görüntüsü -->
+    <div class="col-md-6">
+        <h5 class="text-center mb-2">Kamera</h5>
+        <div class="image-container">
+            <video id="video" autoplay></video>
+        </div>
+    </div>
+    
+    <!-- Şifrelenmiş Görüntü -->
+    <div class="col-md-6">
+        <h5 class="text-center mb-2">Şifrelenmiş Görüntü</h5>
+        <div class="image-container encrypted">
+            <img id="encrypted-image" src="/static/placeholder.png" alt="Şifrelenmiş">
+        </div>
+    </div>
+</div>
+
+<!-- Terminal ve Log Alanı -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="terminal-title">Sistem Bildirim Konsolu</div>
+        <div id="log-area" class="terminal">
+            <div>🚀 MDcription - Görüntü Şifreleme Sistemi başlatıldı...</div>
+            <div>📹 Kamera açılıyor ve görüntü işleme hazırlanıyor...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Butonlar -->
+<div class="row mb-4 justify-content-center">
+    <div class="col-auto">
+        <button id="btn-capture" class="btn btn-primary me-2">
+            <i class="fas fa-camera"></i> 📷 Görüntü Yakala
+        </button>
+    </div>
+    <div class="col-auto">
+        <button id="btn-save" class="btn btn-primary me-2">
+            <i class="fas fa-save"></i> 💾 Kaydet
+        </button>
+    </div>
+    <div class="col-auto">
+        <button id="btn-toggle-camera" class="btn btn-secondary me-2">
+            <i class="fas fa-eye"></i> 👁️ Kamerayı Gizle
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Global değişkenler
+    let stream = null;
+    let video = document.getElementById('video');
+    let capturedImage = null;
+    let cameraVisible = true;
+    let streamingInterval = null;
+    
+    // Log alanına mesaj ekleme
+    function addLog(message) {
+        const logArea = document.getElementById('log-area');
+        const logMessage = document.createElement('div');
+        logMessage.textContent = message;
+        logArea.appendChild(logMessage);
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+    
+    // Kamerayı başlatma
+    async function startCamera() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: {
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            });
+            video.srcObject = stream;
+            video.onloadedmetadata = function() {
+                video.play();
+                addLog("▶️ Kamera başlatıldı.");
+                
+                // Kamera streaming başladığında şifreleme işlemini başlat
+                startLiveEncryption();
+            };
+        } catch (err) {
+            addLog("❌ Kamera erişim hatası: " + err.message);
+            console.error("Kamera erişim hatası:", err);
+        }
+    }
+    
+    // Anlık şifreleme simülasyonu
+    function startLiveEncryption() {
+    const canvas = document.createElement('canvas');
+    const encryptedImg = document.getElementById('encrypted-image');
+    
+    // Her 100ms'de bir şifrele
+    streamingInterval = setInterval(() => {
+        if (!video.videoWidth || !cameraVisible) return;
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Canvas görüntüsünü blob olarak al
+        canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append('image', blob, 'live_capture.png');
+            
+            // Sunucuya şifreleme için gönder
+            fetch('/live-encrypt', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Base64 şifreli görüntüyü göster
+                    const img = new Image();
+                    img.onload = () => {
+                        encryptedImg.src = img.src;
+                    };
+                    img.src = 'data:image/png;base64,' + data.encrypted_image;
+                }
+            })
+            .catch(error => {
+                console.error('Şifreleme hatası:', error);
+            });
+        }, 'image/png');
+    }, 100);
+}
+    // Sayfa yüklendiğinde kamerayı başlat
+    document.addEventListener('DOMContentLoaded', function() {
+        startCamera();
+        
+        // Görüntü yakalama butonu
+        document.getElementById('btn-capture').addEventListener('click', function() {
+            if (!cameraVisible) {
+                addLog("⚠️ Kamera görüntüsü gizli. Lütfen önce kamerayı gösterin.");
+                return;
+            }
+            
+            if (!video.videoWidth) {
+                addLog("⚠️ Kamera henüz hazır değil. Lütfen bekleyin.");
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            capturedImage = canvas.toDataURL('image/png');
+            addLog("📸 Görüntü yakalandı ve şifrelenmeye hazır.");
+        });
+        
+        // Kaydetme butonu
+        document.getElementById('btn-save').addEventListener('click', function() {
+            if (!capturedImage) {
+                addLog("⚠️ Kaydedilecek görüntü bulunamadı. Önce görüntü yakalamalısınız.");
+                return;
+            }
+            
+            // Canvas'tan blob formatına dönüştürme
+            fetch(capturedImage)
+                .then(res => res.blob())
+                .then(blob => {
+                    const formData = new FormData();
+                    formData.append('image', blob, 'capture.png');
+                    
+                    // Sunucuya görüntüyü gönderme
+                    fetch('/capture', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Sunucunun şifrelediği görüntüyü yükleme
+                            document.getElementById('encrypted-image').src = '/static/uploads/' + data.encrypted;
+                            addLog(`💾 Görüntü şifrelendi ve kaydedildi (ID: ${data.id}).`);
+                        } else {
+                            addLog("❌ Kaydetme hatası: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        addLog("❌ Sunucu hatası: " + error);
+                        console.error("Sunucu hatası:", error);
+                    });
+            });
+        });
+        
+        // Kamerayı gizle/göster butonu
+        document.getElementById('btn-toggle-camera').addEventListener('click', function() {
+            if (cameraVisible) {
+                video.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-eye"></i> 👁️ Kamerayı Göster';
+                addLog("🙈 Kamera görüntüsü gizlendi.");
+            } else {
+                video.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i> 👁️ Kamerayı Gizle';
+                addLog("👁️ Kamera görüntüsü gösteriliyor.");
+            }
+            cameraVisible = !cameraVisible;
+        });
+    });
+    
+    // Sayfa kapatıldığında kamerayı ve intervali durdur
+    window.addEventListener('beforeunload', function() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        if (streamingInterval) {
+            clearInterval(streamingInterval);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}MDcription - Şifreli Görseller{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Şifreli Görsel Galerisi</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <h5 class="text-center mb-2">
+            Kayıtlı Görseller 
+            <input type="checkbox" id="select-all-images" class="ms-2">
+        </h5>
+        <div class="list-group" id="image-list">
+            {% for image in images %}
+            <button type="button" class="list-group-item list-group-item-action" data-id="{{ image[0] }}">
+                <input type="checkbox" class="form-check-input me-2 image-checkbox" data-id="{{ image[0] }}">
+                ID: {{ image[0] }} - Tarih: {{ image[1] }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h5 class="text-center mb-2">Şifrelenmiş Görüntü</h5>
+                <div class="image-container encrypted">
+                    <img id="gallery-encrypted" src="/static/placeholder.png" alt="Şifrelenmiş">
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h5 class="text-center mb-2">Deşifre Edilmiş Görüntü</h5>
+                <div class="image-container decrypted">
+                    <img id="gallery-decrypted" src="/static/placeholder.png" alt="Deşifrelenmiş">
+                </div>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <button id="btn-decrypt-gallery" class="btn btn-primary me-2">
+                    🔓 Deşifrele
+                </button>
+            </div>
+            <div class="col-auto">
+                <button id="btn-delete-selected" class="btn btn-danger me-2">
+                    🗑️ Seçilenleri Sil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    let currentImageId = null;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tüm görüntüleri seçme/seçimi kaldırma
+        const selectAllCheckbox = document.getElementById('select-all-images');
+        const imageCheckboxes = document.querySelectorAll('.image-checkbox');
+        
+        selectAllCheckbox.addEventListener('change', function() {
+            imageCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+        
+        // Görsel listesinden tıklama olayı
+        document.querySelectorAll('#image-list .list-group-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Eğer checkbox'a tıklanmadıysa
+                if (!e.target.classList.contains('form-check-input')) {
+                    // Aktif sınıfını yönet
+                    document.querySelectorAll('#image-list .list-group-item').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // ID'yi al
+                    currentImageId = this.dataset.id;
+                    
+                    // Doğrudan şifreli görüntüyü yükle
+                    fetch(`/load/${currentImageId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                // Hemen şifreli görüntüyü göster
+                                document.getElementById('gallery-encrypted').src = '/static/uploads/' + data.encrypted;
+                                // Deşifrelenmiş görüntüyü temizle
+                                document.getElementById('gallery-decrypted').src = '/static/placeholder.png';
+                            } else {
+                                alert("Görüntü yüklenemedi: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Yükleme hatası:", error);
+                            alert("Sunucu hatası: " + error);
+                        });
+                }
+            });
+        });
+        
+        // Otomatik olarak ilk görüntüyü seç - varsa
+        const firstImage = document.querySelector('#image-list .list-group-item');
+        if (firstImage) {
+            firstImage.click();
+        }
+        
+        // Deşifreleme butonu
+        document.getElementById('btn-decrypt-gallery').addEventListener('click', function() {
+            if (!currentImageId) {
+                alert("Lütfen önce bir görüntü seçin.");
+                return;
+            }
+            
+            fetch(`/decrypt/${currentImageId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('gallery-decrypted').src = '/static/uploads/' + data.decrypted;
+                    } else {
+                        alert("Deşifreleme hatası: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Deşifreleme hatası:", error);
+                    alert("Sunucu hatası: " + error);
+                });
+        });
+        
+        // Seçili görüntüleri silme butonu
+        document.getElementById('btn-delete-selected').addEventListener('click', function() {
+            // Seçili görüntülerin ID'lerini topla
+            const selectedImageIds = Array.from(
+                document.querySelectorAll('.image-checkbox:checked')
+            ).map(checkbox => checkbox.dataset.id);
+            
+            if (selectedImageIds.length === 0) {
+                alert("Lütfen silmek için en az bir görüntü seçin.");
+                return;
+            }
+            
+            if (confirm(`${selectedImageIds.length} adet görüntüyü silmek istediğinize emin misiniz?`)) {
+                // Toplu silme için yeni bir endpoint ekleyin
+                fetch('/delete-multiple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image_ids: selectedImageIds })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`${selectedImageIds.length} adet görüntü başarıyla silindi.`);
+                        // Sayfayı yenile
+                        window.location.reload();
+                    } else {
+                        alert("Silme hatası: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Silme hatası:", error);
+                    alert("Sunucu hatası: " + error);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+
+{% block title %}MDcription - Algoritma Hakkında{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="text-center mb-4">MDcription Şifreleme ve Deşifreleme Algoritması</h2>
+    </div>
+</div>
+
+<!-- Giriş Bölümü -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Giriş</h4>
+            </div>
+            <div class="card-body">
+                <p>MDcription, görüntü dosyalarını güvenli bir şekilde şifrelemek ve deşifrelemek için Mehmet DOĞAN tarafından geliştirilen modern bir görüntü güvenlik sistemidir. İki aşamalı şifreleme algoritması (Piksel Karıştırma + XOR) ile güçlü bir koruma sağlar.</p>
+                
+                <div class="alert alert-info">
+                    <h5>Anahtar Özellikler:</h5>
+                    <ul>
+                        <li>İki aşamalı şifreleme algoritması (Piksel Karıştırma + XOR)</li>
+                        <li>Kişiselleştirilmiş şifreleme anahtarı</li>
+                        <li>Web tabanlı arayüz ve veritabanı entegrasyonu</li>
+                        <li>Canlı kamera entegrasyonu ve anlık şifreleme</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sistem Mimarisi -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Sistem Mimarisi</h4>
+            </div>
+            <div class="card-body">
+                <p>MDcription, Flask tabanlı bir web uygulaması olarak tasarlanmıştır ve şu bileşenlerden oluşur:</p>
+                
+                <div class="row mt-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white text-center p-3">
+                            <h5>Web Arayüzü</h5>
+                            <p class="small mb-0">HTML/CSS/JS</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-secondary text-white text-center p-3">
+                            <h5>Flask Backend</h5>
+                            <p class="small mb-0">Python/Flask</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-tertiary text-white text-center p-3">
+                            <h5>Şifreleme Motoru</h5>
+                            <p class="small mb-0">OpenCV</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white text-center p-3">
+                            <h5>Veritabanı</h5>
+                            <p class="small mb-0">SQLite</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <p>Sistem, kullanıcı arayüzü, sunucu tarafı işleme ve görüntü işleme katmanlarını birleştirerek görüntülerin güvenli bir şekilde şifrelenmesini, saklanmasını ve yönetilmesini sağlar.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şifreleme Algoritması -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Şifreleme Algoritması</h4>
+            </div>
+            <div class="card-body">
+                <p>MDcription'ın şifreleme algoritması aşağıdaki adımlardan oluşur:</p>
+                
+                <h5 class="text-primary">1. Piksel Karıştırma (Pixel Shuffle)</h5>
+                <div class="algorithm-steps p-3 mb-4 bg-light border-left border-primary">
+                    <ol>
+                        <li>Görüntüyü düzleştirilmiş bir diziye dönüştür (flat array).</li>
+                        <li>"MEHMET DOĞAN" isminin ASCII değerlerinin toplamını seed olarak kullan.</li>
+                        <li>Bu seed ile rastgele bir permütasyon indeksi oluştur.</li>
+                        <li>Pikselleri bu indekse göre yeniden düzenle.</li>
+                    </ol>
+                </div>
+                
+                <div class="code-block p-3 mb-4 bg-dark text-light">
+<pre>
+def pixel_shuffle_encrypt(image, seed=None):
+    # MEHMET DOĞAN ismini kullanarak bir seed oluşturalım
+    if seed is None:
+        # İsimden bir sayı üretme (ASCII değerleri toplamı)
+        name = "MEHMET DOĞAN"
+        seed = sum(ord(char) for char in name)
+    
+    np.random.seed(seed)
+    flat = image.reshape(-1, image.shape[2])
+    idx = np.arange(flat.shape[0])
+    np.random.shuffle(idx)
+    return flat[idx].reshape(image.shape), idx
+</pre>
+                </div>
+                
+                <h5 class="text-primary">2. XOR Şifreleme</h5>
+                <div class="algorithm-steps p-3 mb-4 bg-light border-left border-primary">
+                    <ol>
+                        <li>"MEHMET DOĞAN" isminden bir anahtar değeri oluştur (ASCII toplamını 256'ya modül al).</li>
+                        <li>Karıştırılmış görüntüye kişisel imza uygula.</li>
+                        <li>İmzalı görüntüye XOR anahtarı ile bitwise XOR işlemi uygula.</li>
+                    </ol>
+                </div>
+                
+                <div class="code-block p-3 mb-4 bg-dark text-light">
+<pre>
+def xor_encrypt(image, key=None):
+    # MEHMET DOĞAN isminden anahtar üretelim
+    if key is None:
+        name = "MEHMET DOĞAN"
+        key = sum(ord(char) for char in name) % 256  # 0-255 arasında bir değer
+    
+    # Kişisel imza uygula
+    signed_image = apply_signature(image.copy())
+    
+    return cv2.bitwise_xor(signed_image, key).astype(np.uint8)
+</pre>
+                </div>
+                
+                <h5 class="text-primary">3. İmza Uygulama</h5>
+                <p>Şifreleme sürecinde, görüntünün sağ alt köşesine gizli bir dijital imza eklenir:</p>
+                
+                <div class="code-block p-3 mb-4 bg-dark text-light">
+<pre>
+def apply_signature(image):
+    # Görüntünün alt kısmına küçük bir imza ekleyelim
+    height, width = image.shape[:2]
+    signature = "MD"  # Mehmet DOĞAN'ın baş harfleri
+    
+    # Köşeye bir imza ekleyelim (sadece birkaç piksel)
+    for i in range(len(signature)):
+        x = width - 10 - (i * 10)
+        y = height - 10
+        # İmzanın ASCII değerlerini görüntüye gizleyelim
+        if x >= 0 and y >= 0:
+            pixel_value = ord(signature[i])
+            image[y, x, 0] = pixel_value  # Kırmızı kanalında imza
+    
+    return image
+</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deşifreleme Algoritması -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">Deşifreleme Algoritması</h4>
+            </div>
+            <div class="card-body">
+                <p>Deşifreleme süreci, şifreleme adımlarının tam tersini uygular:</p>
+                
+                <h5 class="text-secondary">1. XOR Deşifreleme</h5>
+                <div class="algorithm-steps p-3 mb-4 bg-light border-left border-secondary">
+                    <ol>
+                        <li>Aynı anahtar değerini "MEHMET DOĞAN" isminden türet.</li>
+                        <li>Şifrelenmiş görüntüye aynı anahtar ile bitwise XOR işlemi uygula.</li>
+                    </ol>
+                </div>
+                
+                <div class="code-block p-3 mb-4 bg-dark text-light">
+<pre>
+def xor_decrypt(image, key=None):
+    # MEHMET DOĞAN isminden anahtar üretelim
+    if key is None:
+        name = "MEHMET DOĞAN"
+        key = sum(ord(char) for char in name) % 256  # 0-255 arasında bir değer
+    
+    # XOR işlemi ile çözelim
+    return cv2.bitwise_xor(image, key).astype(np.uint8)
+</pre>
+                </div>
+                
+                <h5 class="text-secondary">2. Piksel Düzenleme</h5>
+                <div class="algorithm-steps p-3 mb-4 bg-light border-left border-secondary">
+                    <ol>
+                        <li>Veritabanından kaydedilmiş karıştırma indeksini (shuffle index) al.</li>
+                        <li>Bu indeksi kullanarak pikselleri orijinal konumlarına geri yerleştir.</li>
+                    </ol>
+                </div>
+                
+                <div class="code-block p-3 mb-4 bg-dark text-light">
+<pre>
+def pixel_shuffle_decrypt(image, idx):
+    flat = image.reshape(-1, image.shape[2])
+    original = np.zeros_like(flat)
+    original[idx] = flat
+    return original.reshape(image.shape)
+</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Veri Akış Şeması -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-tertiary text-white">
+                <h4 class="mb-0">Veri Akış Şeması</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white p-3 mb-3">
+                                <h5>Orijinal Görüntü</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white p-3 mb-3">
+                                <h5>Piksel Karıştırma</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white p-3 mb-3">
+                                <h5>İmza Uygulama</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white p-3 mb-3">
+                                <h5>XOR Şifreleme</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <div class="card bg-tertiary text-white p-3 mb-3 w-50 mx-auto">
+                                <h5>Şifrelenmiş Görüntü + İndeks</h5>
+                            </div>
+                            <i class="fas fa-database fa-2x text-primary mt-2 mb-2"></i>
+                            <div class="card bg-info text-white p-3 mb-3 w-50 mx-auto">
+                                <h5>Veritabanı Kaydı</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-center">
+                            <h5 class="text-secondary">Deşifreleme Akışı</h5>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="card bg-secondary text-white p-3 mb-3">
+                                <h5>Şifrelenmiş Görüntü</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-secondary"></i>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-secondary text-white p-3 mb-3">
+                                <h5>XOR Deşifreleme</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-secondary"></i>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-secondary text-white p-3 mb-3">
+                                <h5>Piksel Düzenleme</h5>
+                            </div>
+                            <i class="fas fa-arrow-down fa-2x text-secondary"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <div class="card bg-success text-white p-3 mb-3 w-50 mx-auto">
+                                <h5>Orijinal Görüntü</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Güvenlik Analizi -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Güvenlik Analizi</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="text-success">Güçlü Yönler</h5>
+                        <ul class="list-group mb-4">
+                            <li class="list-group-item list-group-item-success">İki katmanlı şifreleme (Piksel karıştırma + XOR)</li>
+                            <li class="list-group-item list-group-item-success">Kişiselleştirilmiş şifreleme anahtarı</li>
+                            <li class="list-group-item list-group-item-success">Görüntü üzerinde gizli imza (dijital damga)</li>
+                            <li class="list-group-item list-group-item-success">Karmaşık piksel yeniden düzenleme algoritması</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-danger">Dikkat Edilmesi Gerekenler</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-danger">XOR anahtarı 8-bit (0-255) aralığında sınırlı</li>
+                            <li class="list-group-item list-group-item-danger">Karıştırma indeksi veritabanında saklanmalı ve korunmalı</li>
+                            <li class="list-group-item list-group-item-danger">Seed değeri sabit olduğundan, aynı seed ile şifrelenen tüm görüntüler benzer permütasyona sahip olabilir</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kullanım Senaryoları -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Kullanım Senaryoları</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Hassas Görüntü Saklama</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Tıbbi görüntüler, kimlik belgeleri veya diğer özel dokümantasyonların güvenli depolanması için kullanılabilir.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Güvenli Görüntü Aktarımı</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>İnternet üzerinden hassas görüntülerin güvenli bir şekilde paylaşılması ve iletilmesi için ideal bir çözüm sunar.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Dijital İmzalama</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Görüntülerin kaynağını doğrulamak için dijital imza ekleme özelliği ile telif hakkı korunabilir.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sonuç -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Sonuç</h4>
+            </div>
+            <div class="card-body">
+                <p>MDcription, kullanımı kolay web tabanlı arayüzü ve etkili şifreleme algoritmasıyla, görüntülerin güvenli bir şekilde şifrelenmesi ve depolanması için güçlü bir çözüm sunar. Sistem, piksel karıştırma ve XOR şifreleme gibi teknikler kullanarak çift katmanlı bir koruma sağlar ve kişiselleştirilmiş bir anahtar yaklaşımı benimser.</p>
+                <p>Gelecekteki geliştirmeler arasında daha güçlü şifreleme algoritmaları, gerçek zamanlı video şifreleme ve daha gelişmiş kullanıcı yönetimi özellikleri yer alabilir.</p>
+                
+                <div class="alert alert-info mt-4">
+                    <h5>İletişim Bilgileri</h5>
+                    <p>Daha fazla bilgi için: <strong>Mehmet DOĞAN</strong><br>
+                    <i class="fas fa-envelope"></i> info@mdcription.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-tertiary {
+        background-color: var(--tertiary);
+    }
+    
+    .border-primary {
+        border-left: 4px solid var(--primary) !important;
+    }
+    
+    .border-secondary {
+        border-left: 4px solid var(--secondary) !important;
+    }
+    
+    .algorithm-steps {
+        border-radius: 4px;
+    }
+    
+    .algorithm-steps ol {
+        margin-bottom: 0;
+    }
+    
+    .code-block {
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    
+    .code-block pre {
+        margin-bottom: 0;
+        color: #f8f9fa;
+    }
+    
+    .card-header h4, .card-header h5 {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
