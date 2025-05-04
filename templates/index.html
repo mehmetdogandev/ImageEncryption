@@ -98,15 +98,15 @@
             console.error("Kamera erişim hatası:", err);
         }
     }
-    
-    // Anlık şifreleme simülasyonu
-    function startLiveEncryption() {
+ // Anlık şifreleme simülasyonu
+function startLiveEncryption() {
     const canvas = document.createElement('canvas');
     const encryptedImg = document.getElementById('encrypted-image');
     
     // Her 100ms'de bir şifrele
     streamingInterval = setInterval(() => {
-        if (!video.videoWidth || !cameraVisible) return;
+        // Burada !cameraVisible kontrolünü kaldırıyoruz
+        if (!video.videoWidth) return;
         
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -201,20 +201,56 @@
                     });
             });
         });
-        
-        // Kamerayı gizle/göster butonu
         document.getElementById('btn-toggle-camera').addEventListener('click', function() {
-            if (cameraVisible) {
-                video.style.display = 'none';
-                this.innerHTML = '<i class="fas fa-eye"></i> 👁️ Kamerayı Göster';
-                addLog("🙈 Kamera görüntüsü gizlendi.");
-            } else {
-                video.style.display = 'block';
-                this.innerHTML = '<i class="fas fa-eye-slash"></i> 👁️ Kamerayı Gizle';
-                addLog("👁️ Kamera görüntüsü gösteriliyor.");
+    const videoContainer = document.querySelector('.col-md-6:first-child .image-container');
+    const video = document.getElementById('video');
+    
+    // Toggle durumunu kontrol ediyoruz
+    const isHidden = this.innerHTML.includes('Kamerayı Göster');
+    
+    if (isHidden) {
+        // Eğer göster butonuna tıklandıysa - kamera şu an gizli
+        // Overlay'i gizle
+        const overlay = document.querySelector('.camera-white-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        
+        this.innerHTML = '<i class="fas fa-eye-slash"></i> 👁️ Kamerayı Gizle';
+        addLog("👁️ Kamera görüntüsü gösteriliyor.");
+    } else {
+        // Eğer gizle butonuna tıklandıysa - kamera şu an görünür
+        // Beyaz overlay oluştur ve ekle
+        let overlay = document.querySelector('.camera-white-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'camera-white-overlay';
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'white';
+            overlay.style.zIndex = '10';
+            
+            // videoContainer pozisyonunu relative yap (overlay için)
+            if (window.getComputedStyle(videoContainer).position === 'static') {
+                videoContainer.style.position = 'relative';
             }
-            cameraVisible = !cameraVisible;
-        });
+            
+            videoContainer.appendChild(overlay);
+        } else {
+            overlay.style.display = 'block';
+        }
+        
+        this.innerHTML = '<i class="fas fa-eye"></i> 👁️ Kamerayı Göster';
+        addLog("🙈 Kamera görüntüsü gizlendi.");
+    }
+    
+    // cameraVisible değişkeni hep true kalacak böylece şifreleme devam edecek
+    cameraVisible = true;
+});
+        
     });
     
     // Sayfa kapatıldığında kamerayı ve intervali durdur

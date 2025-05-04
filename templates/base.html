@@ -7,40 +7,68 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #00a2ff;
-            --secondary: #0069d9;
-            --tertiary: #33b5ff;
-            --light: #e6f5ff;
-            --dark: #001830;
-            --gray: #f0f8ff;
-            --white: #FFFFFF;
-            --success: #4CAF50;
-            --warning: #FFC107;
-            --error: #F44336;
+            --primary: #00ff41;
+            --secondary: #008f11;
+            --tertiary: #00ff41;
+            --light: #0f0f0f;
+            --dark: #00ff41;
+            --gray: #0f0f0f;
+            --white: #00ff41;
+            --success: #00ff41;
+            --warning: #ffff00;
+            --error: #ff0000;
+            --bg-dark: #000000;
+            --text-shadow: 0 0 10px #00ff41;
+        }
+        
+        @font-face {
+            font-family: 'Matrix';
+            src: url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
         }
         
         body {
-            background-color: var(--light);
-            color: var(--dark);
-            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--primary);
+            font-family: 'Matrix', 'Courier New', monospace;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Matrix Rain Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: 0.98;
+            z-index: -2; /* Canvas'ın üstünde olması için -2 yapıldı */
         }
         
         /* Header (Navigasyon) */
         .header {
             display: flex;
-            background-color: var(--primary);
-            color: var(--white);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--primary);
             padding: 0;
+            border-bottom: 1px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            position: relative; /* Canvas'ın üstünde olması için */
+            z-index: 1; /* Canvas'ın üstünde olması için */
         }
         
         .header .brand {
-            background-color: var(--primary);
-            color: var(--white);
-            font-size: 22px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--primary);
+            font-size: 24px;
             font-weight: bold;
             padding: 15px 25px;
             display: flex;
             align-items: center;
+            text-shadow: var(--text-shadow);
+            letter-spacing: 2px;
         }
         
         .header .nav {
@@ -48,30 +76,47 @@
         }
         
         .header .nav-link {
-            color: var(--white);
+            color: var(--primary);
             font-weight: bold;
             padding: 15px 25px;
             text-decoration: none;
             display: flex;
             align-items: center;
+            text-shadow: var(--text-shadow);
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
         
         .header .nav-link:hover, 
         .header .nav-link.active {
-            background-color: var(--secondary);
-            color: var(--white);
+            background-color: rgba(0, 143, 17, 0.3);
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
+            box-shadow: inset 0 0 10px var(--primary);
         }
         
         /* Ana içerik alanı */
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 15px var(--primary);
+            margin-top: 20px;
+            border: 1px solid var(--primary);
+            position: relative; /* Canvas'ın üstünde olması için */
+            z-index: 1; /* Canvas'ın üstünde olması için */
+        }
+        
         .image-container {
             border: 2px solid var(--primary);
             border-radius: 8px;
-            background-color: var(--white);
+            background-color: rgba(0, 0, 0, 0.5);
             height: 320px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .image-container img, 
@@ -83,78 +128,295 @@
         
         .image-container.encrypted {
             border-color: var(--secondary);
+            box-shadow: 0 0 15px var(--secondary);
         }
         
         .image-container.decrypted {
             border-color: var(--success);
+            box-shadow: 0 0 15px var(--success);
         }
         
         /* Terminal ve konsol */
         .terminal {
-            background-color: var(--white);
-            border: 1px solid var(--tertiary);
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
             border-radius: 0 0 4px 4px;
             height: 160px;
             overflow-y: auto;
             padding: 10px;
-            font-family: 'Consolas', monospace;
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+            box-shadow: inset 0 0 10px var(--primary);
         }
         
         .terminal-title {
-            background-color: var(--primary);
-            color: var(--white);
+            background-color: rgba(0, 143, 17, 0.3);
+            color: var(--primary);
             font-weight: bold;
             font-size: 14px;
             padding: 10px;
             border-radius: 4px 4px 0 0;
             text-align: center;
+            border: 1px solid var(--primary);
+            border-bottom: none;
+            text-shadow: var(--text-shadow);
+            letter-spacing: 1px;
         }
         
         /* Butonlar */
         .btn-primary {
-            background-color: var(--primary);
+            background-color: rgba(0, 0, 0, 0.7);
             border-color: var(--primary);
+            color: var(--primary);
             padding: 8px 20px;
+            box-shadow: 0 0 10px var(--primary);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
         
         .btn-primary:hover {
-            background-color: var(--tertiary);
-            border-color: var(--tertiary);
+            background-color: rgba(0, 255, 65, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            text-shadow: var(--text-shadow);
         }
         
         .btn-secondary {
-            background-color: var(--secondary);
+            background-color: rgba(0, 0, 0, 0.7);
             border-color: var(--secondary);
+            color: var(--primary);
             padding: 8px 20px;
+            box-shadow: 0 0 10px var(--secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 143, 17, 0.3);
+            border-color: var(--secondary);
+            box-shadow: 0 0 20px var(--secondary);
         }
         
         .btn-danger {
-            background-color: var(--error);
+            background-color: rgba(0, 0, 0, 0.7);
             border-color: var(--error);
+            color: var(--error);
             padding: 8px 20px;
+            box-shadow: 0 0 10px var(--error);
+        }
+        
+        .btn-danger:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+            border-color: var(--error);
         }
         
         /* Liste görünümü */
         .list-group-item {
-            background-color: var(--white);
-            color: var(--dark);
-            border-color: var(--tertiary);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--primary);
+            border-color: var(--primary);
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .list-group-item:hover {
-            background-color: var(--gray);
+            background-color: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .list-group-item.active {
-            background-color: var(--tertiary);
-            border-color: var(--tertiary);
-            color: var(--white);
+            background-color: rgba(0, 143, 17, 0.3);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        /* Card stil */
+        .card {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        .card-header {
+            background-color: rgba(0, 143, 17, 0.3);
+            border-bottom: 1px solid var(--primary);
+            text-shadow: var(--text-shadow);
+        }
+        
+        .card-body {
+            color: var(--primary);
+        }
+        
+        /* Matrix yağmur efekti için canvas */
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Diğer içeriklerin arkasında kalması için */
+        }
+        
+        /* Form elementleri */
+        input[type="text"], 
+        input[type="password"],
+        select,
+        textarea {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 5px var(--primary);
+        }
+        
+        input[type="text"]:focus, 
+        input[type="password"]:focus,
+        select:focus,
+        textarea:focus {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Heading */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary);
+            text-shadow: var(--text-shadow);
+            letter-spacing: 2px;
+        }
+        
+        /* Text highlighting */
+        ::selection {
+            background-color: var(--primary);
+            color: var(--bg-dark);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Footer */
+        footer {
+            color: var(--primary);
+            text-shadow: var(--text-shadow);
+            margin-top: 30px;
+            padding: 10px;
+            letter-spacing: 1px;
+            position: relative; /* Canvas'ın üstünde olması için */
+            z-index: 1; /* Canvas'ın üstünde olması için */
+        }
+        
+        /* Checkbox */
+        .form-check-input {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        /* Alert */
+        .alert {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .alert-info {
+            border-color: #00c8ff;
+            box-shadow: 0 0 10px #00c8ff;
+        }
+        
+        /* Code block */
+        .code-block {
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            border: 1px solid var(--primary) !important;
+            box-shadow: 0 0 10px var(--primary) !important;
+        }
+        
+        .code-block pre {
+            color: var(--primary) !important;
+        }
+        
+        /* Algoritma steps */
+        .algorithm-steps {
+            background-color: rgba(0, 0, 0, 0.7) !important;
+            border: 1px solid var(--primary) !important;
+            box-shadow: 0 0 10px var(--primary) !important;
+        }
+        
+        /* Background colors */
+        .bg-primary {
+            background-color: rgba(0, 143, 17, 0.3) !important;
+            color: var(--primary) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .bg-secondary {
+            background-color: rgba(0, 100, 0, 0.3) !important;
+            color: var(--primary) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .bg-tertiary {
+            background-color: rgba(0, 180, 0, 0.3) !important;
+            color: var(--primary) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .bg-light {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            color: var(--primary) !important;
+        }
+        
+        .bg-dark {
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            color: var(--primary) !important;
+        }
+        
+        .bg-success {
+            background-color: rgba(0, 143, 17, 0.3) !important;
+            color: var(--primary) !important;
+            text-shadow: var(--text-shadow);
+        }
+        
+        .bg-warning {
+            background-color: rgba(255, 255, 0, 0.2) !important;
+            color: var(--warning) !important;
+            text-shadow: 0 0 10px var(--warning);
+        }
+        
+        .bg-info {
+            background-color: rgba(0, 200, 255, 0.2) !important;
+            color: #00c8ff !important;
+            text-shadow: 0 0 10px #00c8ff;
         }
     </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <!-- Matrix yağmuru için canvas - Şimdi doğru pozisyonda -->
+    <canvas id="matrix-rain"></canvas>
+    
     <!-- Header -->
     <div class="header">
         <div class="brand">MDcription</div>
@@ -162,7 +424,6 @@
             <a class="nav-link {% if active_page == 'home' %}active{% endif %}" href="/">Anasayfa</a>
             <a class="nav-link {% if active_page == 'gallery' %}active{% endif %}" href="/gallery">Şifreli Görseller</a>
             <a class="nav-link {% if active_page == 'algoritma' %}active{% endif %}" href="/algoritma">Algoritma Hakkında</a>
-
         </div>
     </div>
     
@@ -178,6 +439,47 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Matrix yağmuru için script -->
+    <script>
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+    
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    
+        const letters = "アァイィウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array.from({ length: columns }).fill(1);
+    
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+            ctx.fillStyle = "#0f0"; // Yeşil renk
+            ctx.font = fontSize + "px monospace";
+    
+            drops.forEach((y, i) => {
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                const x = i * fontSize;
+                ctx.fillText(text, x, y * fontSize);
+    
+                if (y * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            });
+        }
+    
+        setInterval(drawMatrix, 33);
+    
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
