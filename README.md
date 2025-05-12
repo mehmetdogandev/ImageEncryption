@@ -1,4 +1,4 @@
-# ImageCription - Görüntü Şifreleme Sistemi
+# ImageEncryption - Görüntü Şifreleme Sistemi
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/flask-2.3.3-green.svg)
@@ -84,7 +84,7 @@ Bu proje, kişisel görüntülerin güvenliğini sağlamak, hassas tıbbi görü
 ### 1. Repoyu Klonlayın
 
 ```bash
-git clone https://github.com/mehmetdogandev/imagecription.git
+git clone https://github.com/mehmetdogandev/Imageencryption.git
 cd imagecription
 ```
 
