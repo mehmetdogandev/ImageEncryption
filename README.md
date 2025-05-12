@@ -84,7 +84,7 @@ Bu proje, kişisel görüntülerin güvenliğini sağlamak, hassas tıbbi görü
 ### 1. Repoyu Klonlayın
 
 ```bash
-git clone https://github.com/mehmetdogandev/Imageencryption.git
+git clone https://github.com/mehmetdogandev/ImageEncryption.git
 cd imagecription
 ```
 
